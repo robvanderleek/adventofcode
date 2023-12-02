@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 
-with open('input.txt') as infile:
-    lines = infile.readlines()
-
 valid_games = []
 game_powers = []
 
@@ -37,6 +34,8 @@ def game_power(game_marbles):
                 blue = int(count)
     return red * green * blue
 
+with open('input.txt') as infile:
+    lines = infile.readlines()
 for line in lines:
     [game_id, all_games] = line.strip().split(': ')
     game_number = int(game_id.split(' ')[1])
