@@ -23,7 +23,7 @@ def last_digit(s):
                 return sub[1]
         index -= 1
 
-with open('input2.txt') as infile:
+with open('input.txt') as infile:
     lines = [line.strip() for line in infile.readlines()]
 numbers = []
 for line in lines:
