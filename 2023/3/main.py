@@ -33,44 +33,36 @@ def is_symbol(grid, x, y):
         return False
     return grid[y][x] != '.' and not grid[y][x].isdigit()
 
+def get_neighbours(x, y, number):
+    num_len = len(str(number))
+    return [(x - 1, y), (x + num_len, y)] + \
+        [(i, y - 1) for i in range(x - 1, x + num_len + 1)] + \
+        [(i, y + 1) for i in range(x - 1, x + num_len + 1)]
+
+def are_neighbours(number_x, number_y, number, x, y):
+    return (x, y) in get_neighbours(number_x, number_y, number)
+
 numbers = []
 for y, row in enumerate(grid):
     for x, number in get_row_numbers(row):
-        num_len = len(str(number))
-        neighbours = [(x - 1, y), (x + num_len, y)] + \
-            [(i, y - 1) for i in range(x - 1, x + num_len + 1)] + \
-            [(i, y + 1) for i in range(x - 1, x + num_len + 1)]
-        for coord in neighbours:
-            if is_symbol(grid, coord[0], coord[1]):
+        for n in get_neighbours(x, y, number):
+            if is_symbol(grid, n[0], n[1]):
                 numbers.append(number)
-            
 print(sum(numbers))
-
-def is_neighbour(num_x, num_y, num, x, y):
-    num_len = len(str(num))
-    neighbours = [(num_x - 1, num_y), (num_x + num_len, num_y)] + \
-        [(i, num_y - 1) for i in range(num_x - 1, num_x + num_len + 1)] + \
-        [(i, num_y + 1) for i in range(num_x - 1, num_x + num_len + 1)]
-    return (x, y) in neighbours
-    
 
 ratios = []
 for y, row in enumerate(grid):
     for x, c in enumerate(row):
-        if c != '*':
-            continue
-        numbers = []
-        if y > 0:
-            for num_x, num in get_row_numbers(grid[y - 1]):
-                if is_neighbour(num_x, y - 1, num, x, y):
-                    numbers.append(num)
-        for num_x, num in get_row_numbers(row):
-            if is_neighbour(num_x, y, num, x, y):
-                numbers.append(num)
-        if y < len(grid) - 1:
-            for num_x, num in get_row_numbers(grid[y + 1]):
-                if is_neighbour(num_x, y + 1, num, x, y):
-                    numbers.append(num)
-        if len(numbers) == 2:
-            ratios.append(numbers[0] * numbers[1])
+        if c == '*':
+            numbers = []
+            if y > 0:
+                numbers.extend([n for n_x, n in get_row_numbers(grid[y - 1])
+                    if are_neighbours(n_x, y - 1, n, x, y)])
+            numbers.extend([n for n_x, n in get_row_numbers(row) 
+                if are_neighbours(n_x, y, n, x, y)])
+            if y < len(grid) - 1:
+                numbers.extend([n for n_x, n in get_row_numbers(grid[y + 1])
+                    if are_neighbours(n_x, y + 1, n, x, y)])
+            if len(numbers) == 2:
+                ratios.append(numbers[0] * numbers[1])
 print(sum(ratios))         
