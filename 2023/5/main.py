@@ -63,15 +63,17 @@ def do_range_mappings(ranges, mappings):
     return result
 
 [line_nr, seed_to_soil] = parse_mapping(lines, line_nr)
-
-print(do_range_mappings([(79, 14), (45, 11)], [seed_to_soil]))
-
 [line_nr, soil_to_fertilizer] = parse_mapping(lines, line_nr)
 [line_nr, fertilizer_to_water] = parse_mapping(lines, line_nr)
 [line_nr, water_to_light] = parse_mapping(lines, line_nr)
 [line_nr, light_to_temperature] = parse_mapping(lines, line_nr)
 [line_nr, temperature_to_humidity] = parse_mapping(lines, line_nr)
 [line_nr, humidity_to_location] = parse_mapping(lines, line_nr)
+all_mappings = [seed_to_soil, soil_to_fertilizer, fertilizer_to_water, 
+    water_to_light, light_to_temperature, temperature_to_humidity, 
+    humidity_to_location]
+
+print(do_range_mappings([(79, 14), (45, 11)], [seed_to_soil, soil_to_fertilizer]))
 
 lowest_location = None
 
@@ -79,10 +81,7 @@ while seeds:
     start = int(seeds.pop(0))
     end = start + int(seeds.pop(0))
     for s in range(start, end):
-        location = do_mappings(s, [seed_to_soil, soil_to_fertilizer, 
-            fertilizer_to_water, water_to_light, light_to_temperature,
-            temperature_to_humidity, humidity_to_location])
-
+        location = do_mappings(s, all_mappings)
         if not lowest_location or location < lowest_location:
             lowest_location = location
             print(f'New lowest: {lowest_location}')
