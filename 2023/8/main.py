@@ -32,7 +32,6 @@ for f in finished:
 
 highest = max([f[1] for f in finished])
 total = highest
-print(math.prod([f[1] for f in finished]))
 while True:
     all_divisors = True
     for f in finished:
