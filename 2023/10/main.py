@@ -1,7 +1,10 @@
 #!/usr/bin/env python3
 import math
+import sys
 
-with open('input-small.txt') as infile:
+sys.setrecursionlimit(14000)
+
+with open('input.txt') as infile:
     lines = infile.readlines()
 grid = []
 start = None
@@ -32,34 +35,36 @@ def can_go_north(pos):
     return get_pipe(pos[0], pos[1]) in ['|', 'L', 'J', 'S'] and \
         get_pipe(pos[0] - 1, pos[1]) in ['|', '7', 'F', 'S']
 
-def come_from(trail, direction):
-    reverse = {'west': 'east', 'north': 'south', 'east': 'west',
-               'south': 'north'}
-    if trail:
-        return trail[-1] == reverse[direction]
-    else:
-        return False
+visited = []
 
 def walk(pos, trail):
-    if grid[pos[0]][pos[1]] == 'S' and len(trail) > 0:
-        return trail
-    if can_go_east(pos) and not come_from(trail, 'east'):
-        result = walk((pos[0], pos[1] + 1), trail + ['east'])
+    if pos in visited:
+        if grid[pos[0]][pos[1]] == 'S' and len(trail) > 2:
+            return trail
+        else:
+            return None
+    else:
+        visited.append(pos)
+    next_pos = (pos[0], pos[1] + 1)
+    if can_go_east(pos):
+        result = walk(next_pos, trail + ['east'])
         if result:
             return result
-    if can_go_south(pos) and not come_from(trail, 'south'):
-        result = walk((pos[0] + 1, pos[1]), trail + ['south'])
+    next_pos = (pos[0] + 1, pos[1])
+    if can_go_south(pos):
+        result = walk(next_pos, trail + ['south'])
         if result:
             return result
-    if can_go_west(pos) and not come_from(trail, 'west'):
-        result = walk((pos[0], pos[1] - 1), trail + ['west'])
+    next_pos = (pos[0], pos[1] - 1)
+    if can_go_west(pos):
+        result = walk(next_pos, trail + ['west'])
         if result:
             return result
-    if can_go_north(pos) and not come_from(trail, 'north'):
-        result = walk((pos[0] - 1, pos[1]), trail + ['north'])
+    next_pos = (pos[0] - 1, pos[1])
+    if can_go_north(pos):
+        result = walk(next_pos, trail + ['north'])
         if result:
             return result
     return None
 
-distance = len(walk(start, []))
-print(math.floor(distance / 2))
+print(math.floor(len(walk(start, [])) / 2))
