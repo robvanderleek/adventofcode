@@ -4,7 +4,7 @@ import sys
 
 sys.setrecursionlimit(14000)
 
-with open('input.txt') as infile:
+with open('input-small3.txt') as infile:
     lines = infile.readlines()
 grid = []
 start = None
@@ -47,24 +47,40 @@ def walk(pos, trail):
         visited.append(pos)
     next_pos = (pos[0], pos[1] + 1)
     if can_go_east(pos):
-        result = walk(next_pos, trail + ['east'])
+        result = walk(next_pos, trail + [next_pos])
         if result:
             return result
     next_pos = (pos[0] + 1, pos[1])
     if can_go_south(pos):
-        result = walk(next_pos, trail + ['south'])
+        result = walk(next_pos, trail + [next_pos])
         if result:
             return result
     next_pos = (pos[0], pos[1] - 1)
     if can_go_west(pos):
-        result = walk(next_pos, trail + ['west'])
+        result = walk(next_pos, trail + [next_pos])
         if result:
             return result
     next_pos = (pos[0] - 1, pos[1])
     if can_go_north(pos):
-        result = walk(next_pos, trail + ['north'])
+        result = walk(next_pos, trail + [next_pos])
         if result:
             return result
     return None
 
-print(math.floor(len(walk(start, [])) / 2))
+trail = walk(start, [])
+print(math.floor(len(trail) / 2))
+
+enclosed = 0
+for idx_y, row in enumerate(grid):
+    in_loop = False
+    for idx_x, col in enumerate(grid[idx_y]):
+        if (idx_y, idx_x) in trail:
+            if col in ['7', 'J', 'F', 'L', '|']:
+                in_loop = not in_loop
+        else:
+            if in_loop:
+                print((idx_y, idx_x))
+                enclosed += 1
+
+print(enclosed)
+
