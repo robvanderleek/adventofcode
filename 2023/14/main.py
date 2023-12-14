@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from functools import cache
 
 with open('input.txt') as infile:
     lines = infile.readlines()
@@ -8,7 +7,6 @@ with open('input.txt') as infile:
         rows.append([c for c in line.strip()])
     platform = tuple(tuple(r) for r in rows)
 
-@cache
 def tilt_north(p):
     pl = [list(r) for r in p]
     while True:
@@ -25,7 +23,6 @@ def tilt_north(p):
             break
     return tuple(tuple(r) for r in pl)
 
-@cache
 def tilt_south(p):
     pl = [list(r) for r in p]
     while True:
@@ -42,7 +39,6 @@ def tilt_south(p):
             break
     return tuple(tuple(r) for r in pl)
 
-@cache
 def tilt_east(p):
     pl = [list(r) for r in p]
     while True:
@@ -57,7 +53,6 @@ def tilt_east(p):
             break
     return tuple(tuple(r) for r in pl)
 
-@cache
 def tilt_west(p):
     pl = [list(r) for r in p]
     while True:
