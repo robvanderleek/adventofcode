@@ -4,7 +4,7 @@ import sys
 
 sys.setrecursionlimit(14000)
 
-with open('input.txt') as infile:
+with open('input-small5.txt') as infile:
     lines = infile.readlines()
 grid = []
 start = None
@@ -77,31 +77,30 @@ for idx_y, row in enumerate(grid):
     in_f = False
     for idx_x, col in enumerate(grid[idx_y]):
         if (idx_y, idx_x) in trail:
+            if in_f:
+                if col == 'J':
+                    in_loop = not in_loop
+                    in_f = False
+                elif col == '7':
+                    in_f = False
             if in_l:
                 if col == '7':
                     in_loop = not in_loop
                     in_l = False
                 elif col == 'J':
                     in_l = False
-            elif in_f:
-                if col == '7':
-                    in_f = False
-                elif col == 'J':
-                    in_loop = not in_loop
-                    in_f = False
-            elif col in ['S', '|']:
+            elif col in ['|']:
                 in_loop = not in_loop
             elif col == 'L':
                 in_l = True
-            elif col == 'F':
-                in_f = True  
-            elif col == '7' or col == 'J':
-                in_loop = not in_loop
+            elif col == 'F' or col == 'S':
+                in_f = True
         else:
             if in_loop:
                 print((idx_y, idx_x))
                 enclosed += 1
     if in_loop:
         print('OOPS')    
+        print(idx_y)
 print(enclosed)
 
