@@ -70,6 +70,25 @@ def walk(pos, trail):
 trail = walk(start, [])
 print(math.floor(len(trail) / 2))
 
+def replace_start(grid, trail):
+    after_start = trail[0]
+    before_start = trail[-2]
+    if before_start[0] > start[0] and before_start[1] == start[1] and \
+        after_start[0] == start[0] and after_start[1] > start[1]:
+        grid[start[0]][start[1]] = 'F'
+    elif before_start[0] < start[0] and before_start[1] == start[1] and \
+        after_start[0] == start[0] and after_start[1] > start[1]:
+        grid[start[0]][start[1]] = 'L'
+    elif before_start[0] == start[0] and before_start[1] < start[1] and \
+        after_start[0] > start[0] and after_start[1] == start[1]:
+        grid[start[0]][start[1]] = '7'
+    elif before_start[0] < start[0] and before_start[1] == start[1] and \
+        after_start[0] == start[0] and after_start[1] < start[1]:
+        grid[start[0]][start[1]] = 'J'
+    else:
+        grid[start[0]][start[1]] = '|'
+
+replace_start(grid, trail)
 enclosed = 0
 for idx_y, row in enumerate(grid):
     in_loop = False
@@ -93,14 +112,12 @@ for idx_y, row in enumerate(grid):
                 in_loop = not in_loop
             elif col == 'L':
                 in_l = True
-            elif col == 'F' or col == 'S':
+            elif col == 'F':
                 in_f = True
         else:
             if in_loop:
-                print((idx_y, idx_x))
                 enclosed += 1
     if in_loop:
         print('OOPS')    
         print(idx_y)
 print(enclosed)
-
