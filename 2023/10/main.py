@@ -4,7 +4,7 @@ import sys
 
 sys.setrecursionlimit(14000)
 
-with open('input-small5.txt') as infile:
+with open('input.txt') as infile:
     lines = infile.readlines()
 grid = []
 start = None
