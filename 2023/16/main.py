@@ -7,57 +7,42 @@ grid = []
 for line in lines:
     grid.append([c for c in line.strip()])
 
-beams = [(0, 3, 'down')]
-visited = []
-
-def trace(beam):
+def trace(beam, grid, visited):
     x = beam[1]
     y = beam[0]
     direction = beam[2]
     while True:
         if y < 0 or y >= len(grid) or x < 0 or x >= len(grid[0]):
-            return 
+            return []
         tile = grid[y][x]
         if (y, x, direction) in visited:
-            return
+            return []
         else: 
             visited.append((y, x, direction))
         if tile == '|':
             if direction == 'left' or direction == 'right':
-                beams.append((y - 1, x, 'up')) 
-                beams.append((y + 1, x, 'down')) 
-                return
+                return [(y - 1, x, 'up'), (y + 1, x, 'down')] 
         elif tile == '-':
             if direction == 'up' or direction == 'down':
-                beams.append((y, x - 1, 'left')) 
-                beams.append((y, x + 1, 'right')) 
-                return
+                return [(y, x - 1, 'left'), (y, x + 1, 'right')]
         elif tile == '\\':
             if direction == 'up':
-                beams.append((y, x - 1, 'left')) 
-                return
+                return [(y, x - 1, 'left')]
             elif direction == 'down':
-                beams.append((y, x + 1, 'right')) 
-                return
+                return [(y, x + 1, 'right')]
             if direction == 'right':
-                beams.append((y + 1, x, 'down')) 
-                return
+                return [(y + 1, x, 'down')]
             elif direction == 'left':
-                beams.append((y - 1, x, 'up')) 
-                return
+                return [(y - 1, x, 'up')]
         elif tile == '/':
             if direction == 'up':
-                beams.append((y, x + 1, 'right')) 
-                return
+                return [(y, x + 1, 'right')]
             elif direction == 'down':
-                beams.append((y, x - 1, 'left')) 
-                return
+                return [(y, x - 1, 'left')]
             if direction == 'right':
-                beams.append((y - 1, x, 'up')) 
-                return
+                return [(y - 1, x, 'up')]
             elif direction == 'left':
-                beams.append((y + 1, x, 'down')) 
-                return
+                return [(y + 1, x, 'down')]
         if direction == 'right':
             x += 1
         elif direction == 'left':
@@ -67,18 +52,20 @@ def trace(beam):
         elif direction == 'down':
             y += 1
 
-while beams:
-    trace(beams.pop())
+def calc_energized(start, grid):
+    beams = [start]
+    visited = []
+    while beams:
+        beams.extend(trace(beams.pop(), grid, visited))
+    visited = set([(v[0], v[1]) for v in visited])
+    result = len(visited)
+    print(f'{start} = {result}')
+    return result
 
-visited = set([(v[0], v[1]) for v in visited])
-print(visited)
+start_coords = []
+start_coords.extend([(0, x, 'down') for x in range(len(grid[0]))])
+start_coords.extend([(y, len(grid[0]) - 1, 'left') for y in range(len(grid))])
+start_coords.extend([(len(grid) - 1, x, 'up') for x in range(len(grid[0]))])
+start_coords.extend([(y, 0, 'right') for y in range(len(grid))])
 
-for y, row in enumerate(grid):
-    line = ''
-    for x, col in enumerate(row):
-        if (y, x) in visited:
-            line += '#' 
-        else:
-            line += '.'
-    print(line)
-print(len(visited))
+print(max([calc_energized(s, grid) for s in start_coords]))
