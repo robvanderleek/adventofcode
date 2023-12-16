@@ -27,31 +27,20 @@ def walk(pos, trail):
             return None
     else:
         visited.append(pos)
-    next_pos = (pos[0], pos[1] + 1)
+    result = None
     if get_pipe(pos[0], pos[1]) in ['-', 'L', 'F', 'S'] and \
             get_pipe(pos[0], pos[1] + 1) in ['-', 'J', '7', 'S']:
-        result = walk(next_pos, trail + [next_pos])
-        if result:
-            return result
-    next_pos = (pos[0] + 1, pos[1])
-    if get_pipe(pos[0], pos[1]) in ['|', '7', 'F', 'S'] and \
+        result = walk((pos[0], pos[1] + 1), trail + [(pos[0], pos[1] + 1)])
+    if not result and get_pipe(pos[0], pos[1]) in ['|', '7', 'F', 'S'] and \
             get_pipe(pos[0] + 1, pos[1]) in ['|', 'L', 'J', 'S']:
-        result = walk(next_pos, trail + [next_pos])
-        if result:
-            return result
-    next_pos = (pos[0], pos[1] - 1)
-    if get_pipe(pos[0], pos[1]) in ['-', 'J', '7', 'S'] and \
+        result = walk((pos[0] + 1, pos[1]), trail + [(pos[0] + 1, pos[1])])
+    if not result and get_pipe(pos[0], pos[1]) in ['-', 'J', '7', 'S'] and \
             get_pipe(pos[0], pos[1] - 1) in ['-', 'L', 'F', 'S']:
-        result = walk(next_pos, trail + [next_pos])
-        if result:
-            return result
-    next_pos = (pos[0] - 1, pos[1])
-    if get_pipe(pos[0], pos[1]) in ['|', 'L', 'J', 'S'] and \
+        result = walk((pos[0], pos[1] - 1), trail + [(pos[0], pos[1] - 1)])
+    if not result and get_pipe(pos[0], pos[1]) in ['|', 'L', 'J', 'S'] and \
         get_pipe(pos[0] - 1, pos[1]) in ['|', '7', 'F', 'S']:
-        result = walk(next_pos, trail + [next_pos])
-        if result:
-            return result
-    return None
+        result = walk((pos[0] - 1, pos[1]), trail + [(pos[0] - 1, pos[1])])
+    return result
 
 sys.setrecursionlimit(14000)
 trail = walk(S, [])
