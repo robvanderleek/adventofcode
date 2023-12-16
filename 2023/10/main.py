@@ -2,31 +2,21 @@
 import math
 import sys
 
-sys.setrecursionlimit(14000)
-
 with open('input.txt') as infile:
     lines = infile.readlines()
 grid = []
 S = None
-for idx, line in enumerate(lines):
+for x, line in enumerate(lines):
     line_pipes = [c for c in line.strip()]
     grid.append(line_pipes)
     if 'S' in line_pipes:
-        S = (idx, line_pipes.index('S'))
+        S = (x, line_pipes.index('S'))
 
 def get_pipe(y, x):
     if y < 0 or y >= len(grid) or x < 0 or x >= len(grid[y]):
         return None
     return grid[y][x]
     
-def can_go_west(pos):
-    return get_pipe(pos[0], pos[1]) in ['-', 'J', '7', 'S'] and \
-        get_pipe(pos[0], pos[1] - 1) in ['-', 'L', 'F', 'S']
-
-def can_go_north(pos):
-    return get_pipe(pos[0], pos[1]) in ['|', 'L', 'J', 'S'] and \
-        get_pipe(pos[0] - 1, pos[1]) in ['|', '7', 'F', 'S']
-
 visited = []
 
 def walk(pos, trail):
@@ -50,17 +40,20 @@ def walk(pos, trail):
         if result:
             return result
     next_pos = (pos[0], pos[1] - 1)
-    if can_go_west(pos):
+    if get_pipe(pos[0], pos[1]) in ['-', 'J', '7', 'S'] and \
+            get_pipe(pos[0], pos[1] - 1) in ['-', 'L', 'F', 'S']:
         result = walk(next_pos, trail + [next_pos])
         if result:
             return result
     next_pos = (pos[0] - 1, pos[1])
-    if can_go_north(pos):
+    if get_pipe(pos[0], pos[1]) in ['|', 'L', 'J', 'S'] and \
+        get_pipe(pos[0] - 1, pos[1]) in ['|', '7', 'F', 'S']:
         result = walk(next_pos, trail + [next_pos])
         if result:
             return result
     return None
 
+sys.setrecursionlimit(14000)
 trail = walk(S, [])
 print(math.floor(len(trail) / 2))
 
