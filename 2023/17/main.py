@@ -8,7 +8,14 @@ with open('input.txt') as infile:
 
 # right: 0, down: 1, left: 2, up: 3
 def can_go(pos, direction, history, length):
-    if history == direction and length + 1 > 2:
+    if pos[0] < 0 or pos[0] >= len(grid) or pos[1] < 0 or \
+            pos[1] >= len(grid[0]):
+        return False
+    if history == -1:
+        return True
+    if length < 3:
+        return direction == history:
+    if length > 8 and direction == history:
         return False
     if direction == 0 and history == 2:
         return False
@@ -17,9 +24,6 @@ def can_go(pos, direction, history, length):
     if direction == 3 and history == 1:
         return False
     if direction == 2 and history == 0:
-        return False
-    if pos[0] < 0 or pos[0] >= len(grid) or pos[1] < 0 or \
-            pos[1] >= len(grid[0]):
         return False
     return True
     
@@ -32,13 +36,14 @@ def dijkstra():
         head = heads.pop()
         key = (head[1], head[2], head[3])
         loss = head[0]
-        if key in min_loss and min_loss[key] <= loss:
-            continue
-        if head[1] == (len(grid) - 1, len(grid[0]) - 1):
-            return head
-        min_loss[key] = loss 
+        pos = head[1]
         history = head[2]
         length = head[3]
+        if key in min_loss and min_loss[key] <= loss:
+            continue
+        if pos == (len(grid) - 1, len(grid[0]) - 1) and length >= 3:
+            return head
+        min_loss[key] = loss 
         right = (head[1][0], head[1][1] + 1)
         if can_go(right, 0, history, length):
             new_loss = loss + grid[right[0]][right[1]]
