@@ -24,9 +24,11 @@ class Conjunction:
         if not 'low' in self._memory.values():
             for d in self._destinations:
                 stack.append(self._name, d, 'low') 
+            return 'low'        
         else:
             for d in self._destinations:
                 stack.append(self._name, d, 'high') 
+            return 'high'
 
 class FlipFlop:
     def __init__(self, name, destinations):
@@ -45,7 +47,6 @@ class FlipFlop:
                 stack.append(self._name, d, self._memory)
 
 class Output:
-
     def add_input(self, name):
         pass
 
@@ -99,15 +100,30 @@ class Stack:
         return len(self._stack) == 0
 
 stack = Stack()
-for _ in range(1000):
+iterations = {}
+for i in range(1000000000):
+    if i > 0 and i % 100000000 == 0:
+        print(i)
     stack.append('button', 'broadcaster', 'low')
     while not stack.is_empty():
         [name_from, name_to, pulse] = stack.next()
         # print(f'{name_from} -{pulse}-> {name_to}')
         if name_to in modules:
-            modules[name_to].process(name_from, pulse, stack)
-    # print('===')
+            result = modules[name_to].process(name_from, pulse, stack)
+            if name_to == 'nx' and 'nx' not in iterations and result == 'high':
+                iterations['nx'] = i + 1
+            if name_to == 'sp' and 'sp' not in iterations and result == 'high':
+                iterations['sp'] = i + 1
+            if name_to == 'cc' and 'cc' not in iterations and result == 'high':
+                iterations['cc'] = i + 1
+            if name_to == 'jq' and 'jq' not in iterations and result == 'high':
+                iterations['jq'] = i + 1
+    if 'nx' in iterations and 'sp' in iterations and 'cc' in iterations \
+        and 'jq' in iterations:  
+            break
 
 print(f'low = {stack._low_count}')
 print(f'high = {stack._high_count}')
 print(stack._low_count * stack._high_count)
+print(iterations)
+print(iterations['nx'] * iterations['sp'] * iterations['cc'] * iterations['jq'])
