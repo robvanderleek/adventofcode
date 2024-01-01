@@ -34,26 +34,13 @@ def get_neighbours(pos, visited):
         result.append(new_pos)
     return result 
 
-def show(maze, path):
-    for y, row in enumerate(maze):
-        line = ''
-        for x, col in enumerate(row):
-            if (y, x) in path:
-                line += 'O'
-            else:
-                line += col
-        print(line)
-
 def build_graph(maze):
     visited_nodes = set()
     heads = [start] 
     edges = set() 
     while heads:
-        # print(heads)
         head = heads.pop(0)
         visited_nodes.add(head)
-        # show(maze, visited_nodes)
-        # input()
         for p in get_neighbours(head, set()):
             visited = [head]
             new_head = p
@@ -65,30 +52,18 @@ def build_graph(maze):
             if len(nbs) > 1:
                 if not new_head in visited_nodes:
                     edges.add((head, new_head, len(visited))) 
-                    # edges.add((new_head, head, len(visited))) 
                     heads.append(new_head)
             if new_head == end:
                 edges.add((head, new_head, len(visited)))
-                # edges.add((new_head, head, len(visited)))
     return edges    
 
 def move(head):
     global longest
     pos = head[0]
     path = head[1]
-    if pos == end:
-        if len(path) > len(longest):
-            longest = path 
+    if pos == end and len(path) > len(longest):
+        longest = path 
     else:
-        # if maze[pos[0]][pos[1]] == '>':
-        #     return [((pos[0], pos[1] + 1), path + [pos])]
-        # elif maze[pos[0]][pos[1]] == '<':
-        #     return [((pos[0], pos[1] - 1), path + [pos])]
-        # elif maze[pos[0]][pos[1]] == '^':
-        #     return [((pos[0] - 1, pos[1]), path + [pos])]
-        # elif maze[pos[0]][pos[1]] == 'v':
-        #     return [((pos[0] + 1, pos[1]), path + [pos])]
-        # else:
         result = []
         new_pos = (pos[0] + 1, pos[1])
         if valid_new_pos(new_pos, head):
@@ -121,50 +96,4 @@ def explore(edges):
                     heads.append((out[0], l + out[2], visited | {out[0]}))
     return longest
 
-edges = build_graph(maze)
-for e in edges:
-    print(e)
-print(explore(edges))
-sys.exit(0)
-
-cache = {}
-heads = [(start, [])]
-idx = 0
-while heads:
-    # print(len(heads))
-    # for h in heads:
-    #     print(f'{h[0]}: {len(h[1])}')
-    heads.sort(key=lambda h: (len(h[1])))
-    head = heads.pop(0)
-    updated = move(head)
-    if type(updated) == list:
-        while updated and len(updated) == 1:
-            head = updated[0]
-            updated = move(head)
-        if updated:
-            for u in updated: 
-                if u[0] in cache and len(u[1]) + 1 < cache[u[0]]:
-                    print('Cache hit!')
-                else:
-                    print(f'Adding to cache: {u[0]}: {len(u[1])}')
-                    cache[u[0]] = len(u[1])
-                    heads.append(u)
-
-        # if len(updated) > 1:
-        #     heads.extend(updated)
-        # elif len(updated) == 1:
-        #     u = updated[0]
-        #     if u[0] in cache and len(u[1]) < cache[u[0]]:
-        #         continue
-        #     else:
-        #         print(f'Adding to cache: {u[0]}: {len(u[1])}')
-        #         cache[u[0]] = len(u[1])
-        #          # heads.append(u)
-        #    heads.append(u)
-    # idx += 1
-    # if idx == 19:
-    #    break
-
-
-# show(maze)
-print(len(longest))
+print(explore(build_graph(maze)))
