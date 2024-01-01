@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-import sys
 
 maze = []
 with open('input.txt') as infile:
