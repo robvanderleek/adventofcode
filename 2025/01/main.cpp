@@ -14,13 +14,13 @@ std::vector<std::pair<char, int>> loadInput(const std::string &filename) {
     return instructions;
 }
 
-int calculateZeros(const std::vector<std::pair<char, int>> &instructions, const bool countDuring = false) {
+int calculateZeros(const std::vector<std::pair<char, int>> &instructions, const bool countPassZero = false) {
     int dial = 50;
     int zeros = 0;
     for (auto i : instructions) {
         auto [direction, count] = i;
         if (count >= 100) {
-            if (countDuring) {
+            if (countPassZero) {
                 zeros += count / 100;
             }
             count = count % 100;
@@ -28,7 +28,7 @@ int calculateZeros(const std::vector<std::pair<char, int>> &instructions, const 
         if (direction == 'L') {
             int nextDial = dial - count;
             if (nextDial < 0) {
-                if (countDuring && dial > 0) {
+                if (countPassZero && dial > 0) {
                     zeros++;
                 }
                 nextDial = 100 + nextDial;
@@ -37,7 +37,7 @@ int calculateZeros(const std::vector<std::pair<char, int>> &instructions, const 
         } else {
             int nextDial = dial + count;
             if (nextDial >= 100) {
-                if (countDuring && nextDial != 100) {
+                if (countPassZero && nextDial != 100) {
                     zeros++;
                 }
                 nextDial = nextDial % 100;
