@@ -1,44 +1,65 @@
 #include <cassert>
 #include <fstream>
 #include <iostream>
+#include <map>
 #include <sstream>
 
-
-void extractRange(const std::string &range, std::vector<std::string> &result) {
-    const auto from = std::stol(range.substr(0, range.find('-')));
-    const auto to = std::stol(range.substr(range.find('-') + 1));
-    for (auto i = from; i <= to; ++i) {
-        result.push_back(std::to_string(i));
-    }
-}
 
 std::vector<std::string> loadInput(const std::string &filename) {
     std::vector<std::string> result;
     std::ifstream file(filename);
     std::string line;
-    std::getline(file, line);
-    size_t pos = 0;
-    while ((pos = line.find(',')) != std::string::npos) {
-        auto range = line.substr(0, pos);
-        extractRange(range, result);
-        line.erase(0, pos + 1);
+    while (std::getline(file, line)) {
+        result.push_back(line);
     }
-    extractRange(line, result);
     return result;
 }
 
-void partOne() {
-    const auto ids = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/03/input-small.txt");
+long largestJoltage(const std::string &bank, int length,
+                    std::map<std::pair<std::string, int>, long> &lookupMap) {
+    if (lookupMap.count(std::make_pair(bank, length))) {
+        return lookupMap[std::make_pair(bank, length)]; // return cached result
+    }
     long result = 0;
+    for (int i = 0; i < bank.length(); ++i) {
+        long prefix = static_cast<long>((bank[i] - '0') * pow(10, length - 1));
+        long candidate = prefix;
+        if (bank.length() - i < length) {
+            continue;
+        }
+        if (length > 1) {
+            long suffix = largestJoltage(bank.substr(i + 1), length - 1, lookupMap);
+            candidate += suffix;
+        }
+        if (candidate > result) {
+            result = candidate;
+        }
+    }
+    lookupMap[std::make_pair(bank, length)] = result;
+    return result;
+}
+
+
+void partOne() {
+    const auto banks = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/03/input.txt");
+    long result = 0;
+    for (const auto &bank : banks) {
+        std::map<std::pair<std::string, int>, long> lookupMap = {};
+        result += largestJoltage(bank, 2, lookupMap);
+    }
     std::cout << result << std::endl;
-    assert(result == 0);
+    assert(result == 17087);
 }
 
 void partTwo() {
-    const auto ids = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/03/input-small.txt");
+    const auto banks = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/03/input.txt");
     long result = 0;
+    for (const auto &bank : banks) {
+        std::map<std::pair<std::string, int>, long> lookupMap = {};
+        result += largestJoltage(bank, 12, lookupMap);
+    }
     std::cout << result << std::endl;
-    assert(result == 0);
+    assert(result == 169019504359949);
 }
 
 int main() {

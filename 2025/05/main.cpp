@@ -4,26 +4,13 @@
 #include <sstream>
 
 
-void extractRange(const std::string &range, std::vector<std::string> &result) {
-    const auto from = std::stol(range.substr(0, range.find('-')));
-    const auto to = std::stol(range.substr(range.find('-') + 1));
-    for (auto i = from; i <= to; ++i) {
-        result.push_back(std::to_string(i));
-    }
-}
-
 std::vector<std::string> loadInput(const std::string &filename) {
     std::vector<std::string> result;
     std::ifstream file(filename);
     std::string line;
-    std::getline(file, line);
-    size_t pos = 0;
-    while ((pos = line.find(',')) != std::string::npos) {
-        auto range = line.substr(0, pos);
-        extractRange(range, result);
-        line.erase(0, pos + 1);
+    while (std::getline(file, line)) {
+        result.push_back(line);
     }
-    extractRange(line, result);
     return result;
 }
 
@@ -43,6 +30,6 @@ void partTwo() {
 
 int main() {
     partOne();
-    partTwo();
+    // partTwo();
     return 0;
 }
