@@ -15,40 +15,24 @@ std::vector<std::string> loadInput(const std::string &filename) {
 }
 
 bool canAccess(const std::vector<std::string> &grid, int row, int col) {
-    int neighbors = 0;
-    // Top-left
-    if (row > 0 && col > 0 && grid[row - 1][col - 1] == '@') {
-        neighbors++;
+    int rolls = 0;
+    std::stringstream ss;
+    if (row > 0) {
+        const std::string &topRow = grid[row - 1];
+        ss << topRow.substr(std::max(0, col - 1), col == 0 ? 2 : 3);
     }
-    // Top
-    if (row > 0 && grid[row - 1][col] == '@') {
-        neighbors++;
+    ss << grid[row].substr(std::max(0, col - 1), col == 0 ? 2 : 3);
+    if (row < grid.size() - 1) {
+        const std::string &bottomRow = grid[row + 1];
+        ss << bottomRow.substr(std::max(0, col - 1), col == 0 ? 2 : 3);
     }
-    // Top-right
-    if (row > 0 && grid[row - 1][col + 1] == '@') {
-        neighbors++;
+    const std::string neighborsStr = ss.str();
+    for (const char c : neighborsStr) {
+        if (c == '@') {
+            rolls++;
+        }
     }
-    // Left
-    if (col > 0 && grid[row][col - 1] == '@') {
-        neighbors++;
-    }
-    // Right
-    if (col < grid[row].length() - 1 && grid[row][col + 1] == '@') {
-        neighbors++;
-    }
-    // Bottom-left
-    if (row < grid.size() - 1 && col > 0 && grid[row + 1][col - 1] == '@') {
-        neighbors++;
-    }
-    // Bottom
-    if (row < grid.size() - 1 && grid[row + 1][col] == '@') {
-        neighbors++;
-    }
-    // Bottom-right
-    if (row < grid.size() - 1 && col < grid[row].length() - 1 && grid[row + 1][col + 1] == '@') {
-        neighbors++;
-    }
-    return neighbors < 4;
+    return rolls - 1 /* self */ < 4;
 }
 
 std::vector<std::string> processGrid(std::vector<std::string> &grid) {
