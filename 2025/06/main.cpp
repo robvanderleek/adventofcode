@@ -23,8 +23,7 @@ std::vector<std::vector<long>> loadNumbersPartOne(const std::vector<std::string>
         std::sregex_token_iterator iter(lines[i].begin(), lines[i].end(), del, -1);
         std::sregex_token_iterator end;
         while (iter != end) {
-            auto value = iter->str();
-            if (!value.empty()) {
+            if (auto value = iter->str(); !value.empty()) {
                 row.push_back(std::stol(value));
             }
             ++iter;
@@ -41,16 +40,13 @@ std::vector<std::vector<long>> loadNumbersPartTwo(const std::vector<std::string>
     for (int j = 0; j < lines[0].length() + 3; ++j) {
         std::stringstream ss;
         for (int k = 0; k < lines.size() - 1; ++k) {
-            if (j >= lines[k].length()) {
-                continue;
-            }
-            auto c = lines[k][j];
-            if (c != ' ') {
-                ss << lines[k][j];
+            if (j < lines[k].length()) {
+                if (const auto c = lines[k][j]; c != ' ') {
+                    ss << lines[k][j];
+                }
             }
         }
-        auto col = ss.str();
-        if (col.empty()) {
+        if (auto col = ss.str(); col.empty()) {
             if (!v.empty()) {
                 result.push_back(v);
                 v = std::vector<long>();
@@ -64,15 +60,10 @@ std::vector<std::vector<long>> loadNumbersPartTwo(const std::vector<std::string>
 
 std::vector<char> loadOperators(const std::string &line) {
     std::vector<char> result;
-    std::regex del("\\s+");
-    std::sregex_token_iterator iter(line.begin(), line.end(), del, -1);
-    std::sregex_token_iterator end;
-    while (iter != end) {
-        auto value = iter->str();
-        if (!value.empty()) {
-            result.push_back(value[0]);
+    for (int i = 0; i < line.length(); ++i) {
+        if (line[i] == '+' || line[i] == '*') {
+            result.emplace_back(line[i]);
         }
-        ++iter;
     }
     return result;
 }
@@ -112,7 +103,7 @@ void partTwo() {
     }
     long result = std::reduce(totals.begin(), totals.end());
     std::cout << result << std::endl;
-    assert(result == 7229350537438);
+    assert(result == 11479269003550);
 }
 
 int main() {
