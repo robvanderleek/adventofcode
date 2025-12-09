@@ -12,11 +12,7 @@ struct Node {
     }
 
     bool operator<(const Node &other) const {
-        if (x != other.x)
-            return x < other.x;
-        if (y != other.y)
-            return y < other.y;
-        return z < other.z;
+        return x != other.x ? x < other.x : y != other.y ? y < other.y : z < other.z;
     }
 };
 
@@ -58,51 +54,68 @@ Graph loadInput(const std::string &filename) {
     return graph;
 }
 
-bool append(std::vector<std::set<Node>> &circuits, const Edge &edge) {
-    for (auto &c : circuits) {
-        for (auto node : c) {
-            if (node == *edge.from || node == *edge.to) {
-                c.insert({*edge.from});
-                c.insert({*edge.to});
-                return true;
-            }
+int walk(const std::vector<Edge> &edges, const Node &node, std::set<Node> &visited) {
+    if (visited.find(node) != visited.end()) {
+        return 0;
+    }
+    visited.insert(node);
+    int count = 1;
+    for (const auto &edge : edges) {
+        if (*edge.from == node && visited.find(*edge.to) == visited.end()) {
+            visited.insert(*edge.from);
+            count += walk(edges, *edge.to, visited);
+        } else if (*edge.to == node && visited.find(*edge.from) == visited.end()) {
+            visited.insert(*edge.to);
+            count += walk(edges, *edge.from, visited);
         }
     }
-    return false;
+    return count;
 }
 
 void partOne() {
-    auto distanceGraph = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/08/input-small.txt");
-    constexpr int numberOfConnections = 10;
-    // constexpr int numberOfConnections = 1000;
-    std::vector<std::set<Node>> circuits;
+    auto distanceGraph = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/08/input.txt");
+    constexpr int numberOfConnections = 1000;
+    std::vector<Edge> edges;
+    edges.reserve(numberOfConnections);
     for (int i = 0; i < numberOfConnections; ++i) {
-        auto edge = distanceGraph.edges[i];
-        if (!append(circuits, edge)) {
-            circuits.push_back({*edge.from, *edge.to});
-        }
+        edges.push_back(distanceGraph.edges[i]);
     }
-    sort(circuits.begin(), circuits.end(), [](const std::set<Node> &a, const std::set<Node> &b) {
-        return a.size() > b.size();
+    std::set<Node> visited;
+    std::vector<int> circuits;
+    for (const auto &node : distanceGraph.nodes) {
+        auto count = walk(edges, node, visited);
+        if (count > 0)
+            circuits.push_back(count);
+
+    }
+    sort(circuits.begin(), circuits.end(), [](int a, int b) {
+        return a > b;
     });
     unsigned long result = 1;
     for (int i = 0; i < 3; ++i) {
-        std::cout << "Circuit " << i << " size: " << circuits[i].size() << std::endl;
-        result *= circuits[i].size();
+        result *= circuits[i];
     }
     std::cout << result << std::endl;
-    assert(result == 40);
+    assert(result == 83520);
 }
 
 void partTwo() {
-    const auto ids = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/08/input-small.txt");
-    long result = 0;
+    const auto distanceGraph = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/08/input.txt");
+    std::vector<Edge> edges;
+    edges.reserve(5601);
+    for (int i = 0; i < 5601; ++i) {
+        edges.push_back(distanceGraph.edges[i]);
+    }
+    std::set<Node> visited;
+    assert(walk(edges, distanceGraph.nodes[0], visited) == 1000);
+    Edge edge = edges[edges.size() - 1];
+    long result = edge.from->x * edge.to->x;
     std::cout << result << std::endl;
-    assert(result == 0);
+    assert(result == 1131823407);
 }
 
 int main() {
     partOne();
-    // partTwo();
+    partTwo();
     return 0;
 }
