@@ -15,14 +15,14 @@ std::vector<std::string> loadInput(const std::string &filename) {
 }
 
 void partOne() {
-    const auto ids = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/12/input-small.txt");
+    const auto ids = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/12/input-small-part-one.txt");
     long result = 0;
     std::cout << result << std::endl;
     assert(result == 0);
 }
 
 void partTwo() {
-    const auto ids = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/12/input-small.txt");
+    const auto ids = loadInput("/Users/rob/projects/robvanderleek/adventofcode/2025/12/input-small-part-one.txt");
     long result = 0;
     std::cout << result << std::endl;
     assert(result == 0);
