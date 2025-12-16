@@ -58,7 +58,7 @@ bool rectIntersects(const Point p1, const Point p2, const Point p3, const Point 
     for (int k = 0; k < points.size(); ++k) {
         auto p = points[k];
         auto q = (k == points.size() - 1 ? points[0] : points[k + 1]);
-        if (intersect(p1, p3, p, q) || intersect(p3, p2, p, q) || intersect(p2, p4, p, q) || intersect(p4, p1, p, q)) {
+        if (intersect(p1, p4, p, q) || intersect(p4, p2, p, q) || intersect(p2, p3, p, q) || intersect(p3, p1, p, q)) {
             return true;
         }
     }
